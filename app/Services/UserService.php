@@ -14,10 +14,11 @@ class UserService
     public static function storeOrFetchAvatar(User $user, ?UploadedFile $avatar): ?string
     {
         if ($avatar) {
+            // Guardar con extensión correcta
             $filename = $user->id.'.'.$avatar->clientExtension();
             $avatar->storePubliclyAs('public/avatars', $filename);
 
-            return "/storage/avatars/{$user->id}.jpg";
+            return "/storage/avatars/{$filename}";
         } else {
             $filepath = storage_path("app/public/avatars/{$user->id}.jpg");
 
