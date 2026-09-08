@@ -12,8 +12,8 @@ export default function BulkActionsBar() {
     archiveSelectedTasks,
   } = useTasksStore();
 
-  if (selectedTaskIds.length === 0) {
-    return null;
+  if (!can('archive task') || selectedTaskIds.length === 0) {
+      return null;
   }
 
   const handleArchiveMultiple = () => {
