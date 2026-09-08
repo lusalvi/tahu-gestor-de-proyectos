@@ -25,11 +25,11 @@ Route::redirect('/', 'dashboard');
 
 Route::get('/storage/avatars/{filename}', function ($filename) {
     $path = storage_path("app/public/avatars/{$filename}");
-    
-    if (!file_exists($path)) {
+
+    if (! file_exists($path)) {
         abort(404);
     }
-    
+
     return response()->file($path, [
         'Content-Type' => mime_content_type($path) ?: 'image/jpeg',
     ]);
