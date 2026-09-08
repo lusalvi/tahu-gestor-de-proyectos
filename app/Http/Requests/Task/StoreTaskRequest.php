@@ -34,7 +34,7 @@ class StoreTaskRequest extends FormRequest
             ],
             'issue_type' => ['required', 'in:Epica,Historia,Tarea,Subtarea'],
             'priority_id' => ['nullable', 'exists:task_priorities,id'],
-            'start_on' => ['nullable', 'date', 'before_or_equal:due_on'],
+            'start_on' => ['nullable', 'date'],
             'due_on' => ['nullable', 'date', 'after_or_equal:start_on'],
             'subscribed_users' => ['array'],
             'labels' => ['array'],
