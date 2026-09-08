@@ -16,7 +16,7 @@ import {
   rem,
 } from '@mantine/core';
 import { DateInput } from '@mantine/dates';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import LabelsDropdown from './LabelsDropdown';
 import PriorityDropdown from './PriorityDropdown';
 import classes from './css/TaskDrawer.module.css';
@@ -31,8 +31,13 @@ export function CreateTaskDrawer() {
     auth: { user },
   } = usePage().props;
 
-  // Si el padre solo admite un único tipo de hijo, se fuerza automáticamente
-  // (ej: Historia y Tarea solo pueden tener Subtarea).
+  const drawerId = useRef(0);
+  useEffect(() => {
+    if (create.opened) {
+      drawerId.current += 1;
+    }
+  }, [create.opened]);
+
   const forcedChildType = (() => {
     const options = ALLOWED_CHILD_TYPES[create.parent_issue_type] ?? [];
     return options.length === 1 ? options[0] : null;
@@ -43,10 +48,8 @@ export function CreateTaskDrawer() {
     assigned_to_user_id: '',
     name: '',
     description: '',
-
     issue_type: create.issue_type || '',
     parent_task_id: create.parent_task_id,
-
     priority_id: null,
     start_on: '',
     due_on: '',
@@ -66,8 +69,6 @@ export function CreateTaskDrawer() {
   useEffect(() => {
     if (create.opened) {
       const resolvedIssueType = forcedChildType || create.issue_type || '';
-
-      // Resetear todos los campos con un objeto
       form.setData({
         group_id: create.group_id ? create.group_id.toString() : '',
         assigned_to_user_id: '',
@@ -87,7 +88,18 @@ export function CreateTaskDrawer() {
   }, [create.opened, create.group_id, create.issue_type, create.parent_task_id]);
 
   const closeDrawer = (force = false) => {
-    if (force || (JSON.stringify(form.data) === JSON.stringify(initial) && !form.processing)) {
+    const isEmpty = (
+      form.data.name === '' &&
+      form.data.description === '' &&
+      form.data.assigned_to_user_id === '' &&
+      form.data.start_on === '' &&
+      form.data.due_on === '' &&
+      form.data.labels.length === 0 &&
+      form.data.priority_id === null &&
+      form.data.attachments.length === 0
+    );
+    
+    if (force || (isEmpty && !form.processing)) {
       closeCreateTask();
     } else {
       openConfirmModal({
@@ -129,7 +141,7 @@ export function CreateTaskDrawer() {
 
   return (
     <Drawer
-      key={create.opened ? 'open' : 'closed'}
+      key={`drawer-${drawerId.current}`}
       opened={create.opened}
       onClose={closeDrawer}
       title={
@@ -171,7 +183,6 @@ export function CreateTaskDrawer() {
 
           {/* Nombre */}
           <TextInput
-            key={`name-${create.opened}`}
             className={classes.nameField}
             label="Nombre"
             placeholder="Nombre de la actividad"
@@ -183,7 +194,6 @@ export function CreateTaskDrawer() {
           />
 
           <RichTextEditor
-            key={create.opened ? "editor-open" : "editor-closed"}
             placeholder="Descripción de la actividad"
             height={260}
             value={form.data.description}
@@ -199,7 +209,6 @@ export function CreateTaskDrawer() {
 
         <MultiSelect
           className={classes.subscribers}
-          key={`subscribers-${create.opened}`}
           label="Suscriptores"
           placeholder="Selecciona suscriptores"
           searchable
@@ -241,7 +250,6 @@ export function CreateTaskDrawer() {
         <div className={classes.sidebar}>
 
           <Select
-            key={`group-${create.opened}`}
             label="Estado"
             placeholder="Selecciona el estado"
             required
@@ -256,7 +264,6 @@ export function CreateTaskDrawer() {
           />
 
           <Select
-            key={`issue-${create.opened}`}
             label="Tipo"
             placeholder="Selecciona el tipo de actividad"
             required
@@ -269,12 +276,11 @@ export function CreateTaskDrawer() {
           />
 
           <Select
-            key={`assignee-${create.opened}`}
             label="Responsable"
             placeholder="Selecciona un responsable"
             searchable
             value={form.data.assigned_to_user_id}
-            onChange={value => updateValue("assigned_to_user_id", value)}
+            onChange={value => updateValue("assigned_to_user_id", value || '')}
             data={usersWithAccessToProject.map(i => ({
               value: i.id.toString(),
               label: i.name,
@@ -284,7 +290,6 @@ export function CreateTaskDrawer() {
           />
 
           <DateInput
-            key={`start-${create.opened}`}
             clearable
             valueFormat="DD MMM YYYY"
             label="Fecha de inicio"
@@ -295,7 +300,6 @@ export function CreateTaskDrawer() {
           />
 
           <DateInput
-            key={`due-${create.opened}`}
             clearable
             valueFormat="DD MMM YYYY"
             minDate={new Date()}
@@ -307,14 +311,12 @@ export function CreateTaskDrawer() {
           />
 
           <LabelsDropdown
-            key={`labels-${create.opened}`}
             items={labels}
             selected={form.data.labels}
             onChange={values => updateValue("labels", values)}
           />
 
           <PriorityDropdown
-            key={`priority-${create.opened}`}
             value={form.data.priority_id}
             onChange={value => updateValue("priority_id", value || null)}
           />

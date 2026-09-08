@@ -23,6 +23,18 @@ use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', 'dashboard');
 
+Route::get('/storage/avatars/{filename}', function ($filename) {
+    $path = storage_path("app/public/avatars/{$filename}");
+
+    if (! file_exists($path)) {
+        abort(404);
+    }
+
+    return response()->file($path, [
+        'Content-Type' => mime_content_type($path) ?: 'image/jpeg',
+    ]);
+})->name('avatar.serve');
+
 Route::group(['middleware' => ['auth:sanctum']], function () {
     // Dashboard
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -69,7 +81,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::put('{project}/notes/{note}', [NoteController::class, 'update'])->name('notes.update')->scopeBindings();
         Route::delete('{project}/notes/{note}', [NoteController::class, 'destroy'])->name('notes.destroy')->scopeBindings();
         Route::post('{project}/notes/{note}/lock', [NoteController::class, 'lock'])->name('notes.lock')->scopeBindings();
-        Route::post('{project}/notes/{note}/unlock', [NoteController::class, 'unlock'])->name('notes.unlock')->middleware(['throttle:10,1'])->scopeBindings();
+        Route::post('{project}/notes/{note}/unlock', [NoteController::class, 'unlock'])->middleware(['throttle:10,1'])->scopeBindings();
         Route::post('{project}/notes/{note}/remove-lock', [NoteController::class, 'removeLock'])->name('notes.remove-lock')->scopeBindings();
 
         // ATTACHMENTS
