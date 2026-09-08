@@ -36,12 +36,14 @@ export default function HeaderRow({ widths, setWidth, allTasks = [] }) {
       <div className={classes.dragHandle}></div>
 
       <div className={classes.checkbox}>
-        <Checkbox 
-          size="xs"
-          checked={isAllSelected}
-          indeterminate={isPartiallySelected}
-          onChange={handleSelectAll}
-        />
+          {can('archive task') && (
+              <Checkbox
+                  size='xs'
+                  checked={isAllSelected}
+                  indeterminate={isPartiallySelected}
+                  onChange={handleSelectAll}
+              />
+          )}
       </div>
 
       <ColumnHeader

@@ -87,12 +87,14 @@ export default function TaskRow({
       </div>
 
       <div className={classes.checkbox}>
-        <Checkbox
-          size='xs'
-          checked={selectedTaskIds.includes(task.id)}
-          onChange={() => toggleTaskSelection(task.id)}
-          onClick={e => e.stopPropagation()}
-        />
+          {can('archive task') && (
+              <Checkbox
+                  size='xs'
+                  checked={selectedTaskIds.includes(task.id)}
+                  onChange={() => toggleTaskSelection(task.id)}
+                  onClick={e => e.stopPropagation()}
+              />
+          )}
       </div>
 
       <div className={classes.key}>
