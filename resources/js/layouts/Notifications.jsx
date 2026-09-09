@@ -1,7 +1,8 @@
 import EmptyWithIcon from '@/components/EmptyWithIcon';
 import Notification from '@/components/Notification';
 import useNotificationsStore from '@/hooks/store/useNotificationsStore';
-import { redirectTo, redirectToUrl } from '@/utils/route';
+import useToastStore from '@/hooks/store/useToastStore';
+import { checkTaskLinkStatus, redirectTo, redirectToUrl } from '@/utils/route';
 
 import {
   ActionIcon,
@@ -29,13 +30,36 @@ export default function Notifications() {
     markAllAsRead,
   } = useNotificationsStore();
 
+  const { show: showToast } = useToastStore();
+
   const unreadCount = notifications.filter(
     n => n.read_at === null
   ).length;
 
-  const open = notification => {
+  const TASK_STATUS_NOTICE = {
+    missing: {
+      type: 'warning',
+      title: 'Actividad no encontrada',
+      message: 'La actividad a la que intentas acceder ya no existe. Es posible que haya sido eliminada',
+    },
+    archived: {
+      type: 'info',
+      title: 'Actividad archivada',
+      message: 'Esta actividad fue archivada',
+    },
+  };
+
+  const open = async notification => {
     if (notification.read_at === null) {
       markAsRead(notification);
+    }
+
+    const status = await checkTaskLinkStatus(notification.link);
+
+    if (status !== 'active') {
+      const notice = TASK_STATUS_NOTICE[status];
+      showToast(notice);
+      return;
     }
 
     redirectToUrl(notification.link);

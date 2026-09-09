@@ -73,7 +73,7 @@ class TaskCreatedNotification extends Notification implements ShouldQueue
         return (new MailMessage)
             ->subject("[{$this->task->project->name}] Se ha cargado una nueva actividad")
             ->greeting("{$this->task->createdByUser->name} ha creado una nueva actividad")
-            ->action('Abrir actividad', route('projects.tasks.open', ['project' => $this->task->project_id, 'task' => $this->task->id]))
+            ->action('Abrir actividad', route('projects.tasks.open', ['project' => $this->task->project_id, 'taskId' => $this->task->id]))
             ->line($this->task->description);
     }
 

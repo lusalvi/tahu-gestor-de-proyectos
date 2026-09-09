@@ -46,7 +46,7 @@ class TaskDueSoonNotification extends Notification implements ShouldQueue
             ->subject("[{$this->task->project->name}] La actividad \"{$this->task->name}\" vence mañana")
             ->greeting("Hola {$notifiable->name},")
             ->line("La actividad \"{$this->task->name}\" vence mañana ({$this->task->due_on->format('d/m/Y')}).")
-            ->action('Abrir actividad', route('projects.tasks.open', ['project' => $this->task->project_id, 'task' => $this->task->id]))
+            ->action('Abrir actividad', route('projects.tasks.open', ['project' => $this->task->project_id, 'taskId' => $this->task->id]))
             ->line('Completar antes de su vencimiento.');
     }
 

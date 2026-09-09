@@ -75,7 +75,7 @@ class TaskAssignedNotification extends Notification implements ShouldQueue
             ->subject("[{$this->task->project->name}] Se te ha asignado una actividad")
             ->greeting("Hola {$notifiable->name},")
             ->line("{$this->task->createdByUser->name} te ha asignado la actividad \"{$this->task->name}\"")
-            ->action('Abrir actividad', route('projects.tasks.open', ['project' => $this->task->project_id, 'task' => $this->task->id]))
+            ->action('Abrir actividad', route('projects.tasks.open', ['project' => $this->task->project_id, 'taskId' => $this->task->id]))
             ->line($this->task->description);
     }
 

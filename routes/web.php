@@ -64,7 +64,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::get('{project}/tasks', [TaskController::class, 'index'])->name('tasks');
         Route::post('{project}/tasks', [TaskController::class, 'store'])->name('tasks.store');
         Route::put('{project}/tasks/{task}', [TaskController::class, 'update'])->name('tasks.update')->scopeBindings();
-        Route::get('{project}/tasks/{task}/open', [TaskController::class, 'index'])->name('tasks.open')->scopeBindings();
+        Route::get('{project}/tasks/{taskId}/open', [TaskController::class, 'index'])->name('tasks.open');
+        Route::get('{project}/tasks/{taskId}/status', [TaskController::class, 'status'])->name('tasks.status');
         Route::delete('{project}/tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy')->scopeBindings();
         Route::post('{project}/tasks/{task}/restore', [TaskController::class, 'restore'])->name('tasks.restore');
 
