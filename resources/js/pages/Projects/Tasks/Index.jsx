@@ -19,8 +19,19 @@ import BulkActionsBar from './Index/BulkActionsBar';
 
 let currentProject = null;
 
+const TASK_STATUS_NOTICE_COPY = {
+  missing: {
+    title: 'Actividad no encontrada',
+    subtitle: 'La actividad a la que intentas acceder ya no existe. Es posible que haya sido eliminada.',
+  },
+  archived: {
+    title: 'Actividad archivada',
+    subtitle: 'Esta actividad fue archivada.',
+  },
+};
+
 const TasksIndex = () => {
-  const { project, taskGroups, groupedTasks, openedTask } = usePage().props;
+  const { project, taskGroups, groupedTasks, openedTask, taskStatusNotice } = usePage().props;
   currentProject = project;
 
   const { groups, setGroups, reorderGroup } = useTaskGroupsStore();
@@ -36,12 +47,17 @@ const TasksIndex = () => {
   }, [isArchived]);
 
   useEffect(() => {
+    // Si la tarea abierta está eliminada o archivada, no hay tablero real para
+    // este request (el backend no lo armó): no tocamos los stores y dejamos
+    // que se muestre el cartel de abajo en su lugar.
+    if (taskStatusNotice) return;
+
     setGroups(taskGroups);
     setTasks(groupedTasks);
     // ACTUALIZADO: Pasar grupos al store de tareas también
     setTasksGroups(taskGroups);
     if (openedTask) addTask(openedTask);
-  }, [taskGroups, groupedTasks]);
+  }, [taskGroups, groupedTasks, taskStatusNotice]);
 
   useEffect(() => {
     return initProjectWebSocket(project);
@@ -65,6 +81,17 @@ const TasksIndex = () => {
       reorderGroup(source.index, destination.index);
     }
   };
+
+  if (taskStatusNotice) {
+    const notice = TASK_STATUS_NOTICE_COPY[taskStatusNotice];
+
+    return (
+      <EmptyResult
+        title={notice.title}
+        subtitle={notice.subtitle}
+      />
+    );
+  }
 
   return (
     <>

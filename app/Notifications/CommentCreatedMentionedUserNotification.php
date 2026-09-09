@@ -74,7 +74,7 @@ class CommentCreatedMentionedUserNotification extends Notification implements Sh
             ->subject("[{$this->comment->task->project->name}] Te han mencionado en un comentario.")
             ->greeting("{$this->comment->user->name} te ha mencionado en un comentario de la actividad {$this->comment->task->name}")
             ->line($this->comment->content)
-            ->action('Abrir actividad', route('projects.tasks.open', ['project' => $this->comment->task->project_id, 'task' => $this->comment->task->id]));
+            ->action('Abrir actividad', route('projects.tasks.open', ['project' => $this->comment->task->project_id, 'taskId' => $this->comment->task->id]));
     }
 
     /**

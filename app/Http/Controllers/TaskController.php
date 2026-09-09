@@ -47,9 +47,50 @@ class TaskController extends Controller
      * @param  Project  $project  Proyecto al que pertenecen las tareas.
      * @param  Task|null  $task  Tarea específica a abrir en el panel lateral (opcional).
      */
-    public function index(Request $request, Project $project, ?Task $task = null): Response
+    public function index(Request $request, Project $project, ?int $taskId = null): Response
     {
         $this->authorize('viewAny', [Task::class, $project]);
+
+        $task = null;
+        $taskStatusNotice = null;
+
+        if ($taskId !== null) {
+            $task = Task::withArchived()->where('project_id', $project->id)->find($taskId);
+
+            if (! $task) {
+                $taskStatusNotice = 'missing';
+
+                session()->flash('flash', [
+                    'type' => 'warning',
+                    'title' => 'Actividad no encontrada',
+                    'message' => 'La actividad a la que intentas acceder ya no existe. Es posible que haya sido eliminada',
+                ]);
+            } elseif ($task->isArchived()) {
+                $taskStatusNotice = 'archived';
+
+                session()->flash('flash', [
+                    'type' => 'info',
+                    'title' => 'Actividad archivada',
+                    'message' => 'Esta actividad fue archivada',
+                ]);
+            }
+        }
+
+        // Si la tarea fue eliminada o archivada, no tiene sentido armar el tablero
+        // completo del proyecto de atrás: se corta acá y el frontend, al recibir
+        // taskStatusNotice, muestra el cartel correspondiente sin montar el board.
+        if ($taskStatusNotice !== null) {
+            return Inertia::render('Projects/Tasks/Index', [
+                'project' => $project,
+                'usersWithAccessToProject' => PermissionService::usersWithAccessToProject($project),
+                'labels' => Label::get(['id', 'name', 'color']),
+                'priorities' => TaskPriorityResource::collection(TaskPriority::orderBy('order')->get()),
+                'taskGroups' => $project->taskGroups()->get(),
+                'groupedTasks' => [],
+                'openedTask' => null,
+                'taskStatusNotice' => $taskStatusNotice,
+            ]);
+        }
 
         $groups = $project
             ->taskGroups()
@@ -131,7 +172,32 @@ class TaskController extends Controller
             'taskGroups' => $groups,
             'groupedTasks' => $groupedTasks,
             'openedTask' => $task ? $task->loadDefault() : null,
+            'taskStatusNotice' => null,
         ]);
+    }
+
+    /**
+     * Devuelve el estado actual de una tarea (activa, archivada o inexistente).
+     *
+     * Pensado para ser consultado por el frontend ANTES de navegar hacia una
+     * notificación, así se puede mostrar un aviso sin abandonar la página actual
+     * cuando la tarea ya no está disponible.
+     */
+    public function status(Project $project, int $taskId): JsonResponse
+    {
+        $this->authorize('viewAny', [Task::class, $project]);
+
+        $task = Task::withArchived()->where('project_id', $project->id)->find($taskId);
+
+        if (! $task) {
+            return response()->json(['status' => 'missing']);
+        }
+
+        if ($task->isArchived()) {
+            return response()->json(['status' => 'archived']);
+        }
+
+        return response()->json(['status' => 'active']);
     }
 
     /**

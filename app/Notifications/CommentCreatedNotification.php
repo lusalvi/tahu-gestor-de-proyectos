@@ -74,7 +74,7 @@ class CommentCreatedNotification extends Notification implements ShouldQueue
             ->subject("[{$this->comment->task->project->name}] Tiene un nuevo comentario.")
             ->greeting("{$this->comment->user->name} ha comentado en la actividad {$this->comment->task->name}")
             ->line($this->comment->content)
-            ->action('Abrir actividad', route('projects.tasks.open', ['project' => $this->comment->task->project_id, 'task' => $this->comment->task->id]));
+            ->action('Abrir actividad', route('projects.tasks.open', ['project' => $this->comment->task->project_id, 'taskId' => $this->comment->task->id]));
     }
 
     /**

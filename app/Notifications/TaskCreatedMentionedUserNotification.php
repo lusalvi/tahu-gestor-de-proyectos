@@ -73,7 +73,7 @@ class TaskCreatedMentionedUserNotification extends Notification implements Shoul
         return (new MailMessage)
             ->subject("[{$this->task->project->name}] Se te ha mencionado en una nueva actividad.")
             ->greeting("{$this->task->createdByUser->name} te ha mencionado en una nueva actividad \"{$this->task->name}\"")
-            ->action('Abrir actividad', route('projects.tasks.open', ['project' => $this->task->project_id, 'task' => $this->task->id]))
+            ->action('Abrir actividad', route('projects.tasks.open', ['project' => $this->task->project_id, 'taskId' => $this->task->id]))
             ->line($this->task->description);
     }
 

@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { router } from '@inertiajs/react';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
@@ -9,6 +10,32 @@ export const redirectTo = (routeName, params = {}) => {
 
 export const redirectToUrl = (url) => {
   router.get(url);
+};
+
+/**
+ * Consulta si la tarea a la que apunta el link de una notificación de tipo
+ * "tasks.open" sigue activa, está archivada o ya no existe.
+ *
+ * El link de estas notificaciones siempre termina en `/open`; se pide el
+ * mismo recurso reemplazando ese sufijo por `/status`, que responde JSON
+ * sin disparar ninguna navegación.
+ *
+ * @returns {Promise<'active'|'archived'|'missing'>} 'active' también ante
+ *          cualquier error de red, para no bloquear links que no son de tareas.
+ */
+export const checkTaskLinkStatus = async (link) => {
+  if (!link || !link.includes('/open')) {
+    return 'active';
+  }
+
+  try {
+    const statusUrl = link.replace(/\/open(?=$|\?)/, '/status');
+    const { data } = await axios.get(statusUrl);
+    return data?.status ?? 'active';
+  } catch (e) {
+    console.warn('No se pudo verificar el estado de la actividad', e);
+    return 'active';
+  }
 };
 
 export const currentUrl = () => {
