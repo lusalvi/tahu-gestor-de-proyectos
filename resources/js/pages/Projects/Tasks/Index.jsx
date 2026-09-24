@@ -35,7 +35,7 @@ const TasksIndex = () => {
   currentProject = project;
 
   const { groups, setGroups, reorderGroup } = useTaskGroupsStore();
-  const { tasks, setTasks, addTask, reorderTask, moveTask, clearTaskSelection } = useTasksStore();
+  const { tasks, setTasks, addTask, reorderTask, moveTask, clearTaskSelection, setGroups: setTasksGroups } = useTasksStore();
   const { hasFilters } = useTaskFiltersStore();
   const { initProjectWebSocket } = useWebSockets();
   const { tasksView } = usePreferences();
