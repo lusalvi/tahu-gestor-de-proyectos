@@ -8,7 +8,8 @@ NProgress.configure({
 
 let timeout = null;
 
-router.on('start', () => {
+router.on('start', (event) => {
+  if (event.detail.visit.headers?.['X-Silent']) return;
   timeout = setTimeout(() => NProgress.start(), 250);
 });
 

@@ -1,0 +1,261 @@
+/* ════════════════════════════════════════════════════════════════
+   Agenda Personal — estilos
+   Usa variables de Mantine: colores, radius, dark-mode via light-dark()
+   ════════════════════════════════════════════════════════════════ */
+
+/* ── Cabecera de página ─────────────────────────────────────────── */
+.pageHeader {
+    margin-bottom: rem(20px);
+}
+
+/* ── Barra de fecha + ordenamiento ─────────────────────────────── */
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: rem(8px);
+    margin-bottom: rem(12px);
+}
+
+.dateChip {
+    padding: rem(5px) rem(12px);
+    border-radius: var(--mantine-radius-md);
+    border: rem(1px) solid light-dark(
+        var(--mantine-color-gray-3),
+        var(--mantine-color-dark-4)
+    );
+    background: light-dark(
+        var(--mantine-color-white),
+        var(--mantine-color-dark-6)
+    );
+    cursor: default;
+}
+
+.dateChipIcon {
+    color: var(--mantine-primary-color-filled);
+}
+
+/* ── Barra de nueva tarea ───────────────────────────────────────── */
+.newTaskBar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: rem(16px);
+}
+
+/* ── Contenedor de la lista ─────────────────────────────────────── */
+.taskList {
+    width: 100%;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   SECCIÓN (cabecera coloreada + cuerpo con filas)
+   ════════════════════════════════════════════════════════════════ */
+
+.section {
+    border-radius: var(--mantine-radius-md);
+    overflow: hidden;
+    border: rem(1px) solid light-dark(
+        var(--mantine-color-gray-2),
+        var(--mantine-color-dark-5)
+    );
+}
+
+/* Cabecera de sección */
+.sectionHeader {
+    padding: rem(10px) rem(16px);
+}
+
+/* Variante: pendientes anteriores — fondo naranja muy suave */
+.sectionHeader--overdue {
+    background: light-dark(
+        color-mix(in srgb, var(--mantine-color-orange-1) 60%, transparent),
+        color-mix(in srgb, var(--mantine-color-orange-9) 25%, var(--mantine-color-dark-6))
+    );
+}
+
+/* Variante: hoy — fondo azul muy suave (color primario del sistema) */
+.sectionHeader--today {
+    background: light-dark(
+        color-mix(in srgb, var(--mantine-primary-color-1, var(--mantine-color-blue-1)) 55%, transparent),
+        color-mix(in srgb, var(--mantine-color-blue-9) 20%, var(--mantine-color-dark-6))
+    );
+}
+
+/* Variante: completadas — fondo verde muy suave */
+.sectionHeader--completed {
+    background: light-dark(
+        color-mix(in srgb, var(--mantine-color-green-1) 55%, transparent),
+        color-mix(in srgb, var(--mantine-color-green-9) 20%, var(--mantine-color-dark-6))
+    );
+}
+
+/* Ícono de sección */
+.sectionIconWrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: rem(26px);
+    height: rem(26px);
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: rem(1px);
+}
+
+.sectionIconWrap--overdue {
+    color: var(--mantine-color-orange-6);
+    background: light-dark(var(--mantine-color-orange-1), var(--mantine-color-orange-9));
+}
+
+.sectionIconWrap--today {
+    color: var(--mantine-primary-color-filled);
+    background: light-dark(
+        color-mix(in srgb, var(--mantine-primary-color-1, var(--mantine-color-blue-1)) 80%, transparent),
+        var(--mantine-color-blue-9)
+    );
+}
+
+.sectionIconWrap--completed {
+    color: var(--mantine-color-green-6);
+    background: light-dark(var(--mantine-color-green-1), var(--mantine-color-green-9));
+}
+
+/* Cuerpo de sección */
+.sectionBody {
+    background: light-dark(
+        var(--mantine-color-white),
+        var(--mantine-color-dark-7)
+    );
+}
+
+/* ════════════════════════════════════════════════════════════════
+   FILA DE TAREA
+   ════════════════════════════════════════════════════════════════ */
+
+.taskRow {
+    display: flex;
+    align-items: center;
+    gap: rem(12px);
+    padding: rem(10px) rem(16px);
+    border-top: rem(1px) solid light-dark(
+        var(--mantine-color-gray-1),
+        var(--mantine-color-dark-5)
+    );
+    min-width: 0;
+    transition: background-color 0.1s ease;
+}
+
+.taskRow:hover {
+    background-color: light-dark(
+        var(--mantine-color-gray-0),
+        var(--mantine-color-dark-6)
+    );
+}
+
+/* Menú ⋮ oculto hasta hover */
+.taskRow .menuTrigger {
+    opacity: 0;
+    transition: opacity 0.1s ease;
+}
+.taskRow:hover .menuTrigger {
+    opacity: 1;
+}
+
+/* En touch siempre visible */
+@media (hover: none) {
+    .taskRow .menuTrigger {
+        opacity: 1;
+    }
+}
+
+/* Estado completada */
+.taskRowCompleted {
+    background-color: light-dark(
+        var(--mantine-color-gray-0),
+        var(--mantine-color-dark-7)
+    );
+}
+.taskRowCompleted:hover {
+    background-color: light-dark(
+        var(--mantine-color-gray-1),
+        var(--mantine-color-dark-6)
+    );
+}
+
+/* ── Partes de la fila ──────────────────────────────────────────── */
+
+.taskCheck {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    width: rem(20px);
+}
+
+.taskBody {
+    flex: 1;
+    min-width: 0;
+}
+
+.taskTitle {
+    line-height: 1.4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.taskNotes {
+    margin-top: rem(2px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Metadatos: prioridad y fecha */
+.taskMeta {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: rem(5px);
+    white-space: nowrap;
+}
+
+.taskDate {
+    min-width: rem(130px);
+}
+
+.metaIcon {
+    color: var(--mantine-color-dimmed);
+    flex-shrink: 0;
+}
+
+/* ── Drawer ─────────────────────────────────────────────────────── */
+.drawerForm {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 0 rem(20px);
+}
+
+.drawerContent {
+    display: flex;
+    flex-direction: column;
+    gap: rem(16px);
+    flex: 1;
+}
+
+/* ── Mobile ─────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+    .taskList { max-width: 100%; }
+
+    .toolbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    /* Ocultar fecha en mobile para no apilarse */
+    .taskDate { display: none; }
+
+    .taskMeta { font-size: rem(11px); }
+
+    .taskRow .menuTrigger { opacity: 1; }
+}
